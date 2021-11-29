@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3.0.5/dist/vue.global.js"></script>
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="main.css">
+    <title>Kims Lek</title>
+</head>
+<body>
+    <div id="app">
+        <div class="informationmenu"> 
+        <scorebo v-bind:score="score" v-bind:moves="moves" v-bind:time="time" ></scorebo></p>
+    </div>
+        <div class="cardboard" style="width: 400px;">
+            <card v-for="element in cards" :key="element.cardID" v-bind:card="cards[element.cardID]" v-on:flip="flip(cards[element.cardID])"></card>
+        </div>
+    </div>
+
+    <script>
+        let scoreB = {
+            props: ["score","moves","time"],
+            template: /*html*/ `
+            <div class="Playerscores"> <p>Moves {{ moves[0].moves }} Player1:  score: {{ score[0].playerscore }} Player2: Score: {{ score[1].playerscore }} </p> </div>
+            <div class="timer">Seconds played {{ time }}</div>
+            <div class="whoisplaying"><p>Player{{score[2].currentplayer + 1}} is playing</p></div>
+            <div class="declareWinner" v-if="score[3].winner"><p> Winner is:  {{ score[3].winner }} </p></div>
+            `
+        }
+
+        let cardC = {
+            props: ["card"],
+            template: /*html*/`
+            <div class="outer" v-on:click="$emit('flip')" 
+                v-bind:style="{ visibility: card.matched? 'hidden': 'visible'}"
+                >
+                <div class="card front" v-bind:style="{ transform: card.flipped? 'rotateY(180deg)': 'none' }">
+                    <img v-bind:src="card.img">
+                </div>
+                <div class="card back" v-bind:style="{ transform: card.flipped? 'rotateY(180deg)': 'none' }"></div>
+            </div>
+            `
+        }
+
+        let app = Vue.createApp({
+            data(){
+                return {
+                    time: 0,
+                    isRunning: false,
+                    score: [{playerscore: 0}, {playerscore: 0},{currentplayer: 0},{winner: ""}],
+                    moves: [{moves: 0}],
+                    flippedCards: [],
+                    numberofMatches,cards: new listofcards(),
+                    }
+                },
+            
+            methods: {
+                clockTimer() {
+                    this.timer = setInterval(() => {
+                        this.time += 1
+                    }, 1000)
+                    
+                },
+                resetTimer(){
+                    clearInterval(this.timer);
+                    this.isRunning = false;
+                    this.time = 0;
+                },
+
+                flip(card){
+                    
+                    if (this.isRunning == false){
+                        this.clockTimer()
+                    }
+                    this.isRunning = true;
+
+                    if (this.flippedCards.length == 0 ) {
+                        this.flippedCards.push(card)
+                        card.flipped = true;
+                        return
+                    }
+                    if (this.flippedCards.length == 1) {
+                        if (this.flippedCards[0].cardID != card.cardID){
+                            this.flippedCards.push(card)
+                            card.flipped = true;
+                            this.moves[0].moves +=1;
+                            this.checkifMatched(card);
+                            this.flippedCards = [];
+                        }
+                        return
+                    }
+                },
+                flipBack(card){
+                    // flip the card back, after some timeout
+                    setTimeout(function(){
+                        card.flipped = false;
+                    },1500);
+                },
+                checkifMatched(card){
+                    if (this.flippedCards[0].img == this.flippedCards[1].img && 
+                        this.flippedCards[0].cardID != this.flippedCards[1].cardID 
+                    ){
+                        this.flippedCards[0].matched = true;
+                        this.flippedCards[1].matched = true;
+                        this.updateScore()
+                    }else{
+                        this.updateCurrentPlayer()
+                    }
+                    this.flipBack(this.flippedCards[0])
+                    this.flipBack(this.flippedCards[1])
+                    
+                },
+                updateScore(){
+                    this.score[this.score[2].currentplayer].playerscore += 1;
+                    if (this.score[0].playerscore + this.score[1].playerscore == this.numberofMatches){
+                        this.gameOver();
+                    }
+                    
+                },
+
+                updateCurrentPlayer(){
+                    if (this.score[2].currentplayer == 1){
+                    this.score[2].currentplayer = 0;
+                }else {
+                    this.score[2].currentplayer = 1;
+                }
+
+                },
+                shuffleAndDeal(){
+                    this.score[3].winner = "";
+                    this.score[1].playerscore = 0;
+                    this.score[0].playerscore = 0;
+                    this.score[2].currentplayer = 0;
+                    this.moves[0].moves = 0;
+
+                    shuffleArray(this.cards);
+                    resetMatched(this.cards);
+
+                },
+                displayWinner(){
+                    winner= "";
+                    if (this.score[0].playerscore > this.score[1].playerscore ){
+                        winner = "Player1";
+                    }else if (this.score[0].playerscore < this.score[1].playerscore ){
+                        winner = "Player2";
+                    }else {
+                        winner = "It's a draw"
+                    }
+                    this.score[3].winner = winner;
+
+                    
+                },
+                gameOver(){
+                    this.displayWinner();
+                    setTimeout(
+                        this.shuffleAndDeal
+                    ,3000);
+                    this.resetTimer();
+                }
+
+            }
+        });
+        app.component('card',cardC);
+        app.component('scorebo',scoreB);
+        app.mount("#app");
+    </script>
+</body>
+</html>
