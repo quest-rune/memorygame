@@ -1,4 +1,35 @@
+html {
+    max-width: 70ch;
+    padding: 3em 1em;
+    margin: auto;
+    line-height: 1.75;
+    font-size: 1.25em;
+    background-color: #DDDDDD;
+  }
+  
 
+/* MENU */
+.menu {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+  }
+.player1class {
+    background-color: #517db6;
+}
+
+.whoisplaying {
+    background-color: #d1574e;
+
+}
+/* Game area*/  
+.cardboard {
+    max-width: 70ch;
+    margin: auto;
+    background-color: #DDDDDD; 
+}
+
+/* CARD */
 .card {
     border: 2px solid black;
     background-color: white;
@@ -34,14 +65,3 @@
 
 
 
-/* MENU */
-.informationmenu {
-    display: flex;
-    justify-content: space-evenly;
-}
-
-/* .declareWinner {
-    display: none;
-} */
-
-/* πeid,ename(πmid,mcapacity(σmcapacity>=(πpname,pcapacity(σpname=Sanchez(project)))(machine))(trained in))  */

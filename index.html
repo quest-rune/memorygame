@@ -22,10 +22,11 @@
         let scoreB = {
             props: ["score","moves","time"],
             template: /*html*/ `
-            <div class="Playerscores"> <p>Moves {{ moves[0].moves }} Player1:  score: {{ score[0].playerscore }} Player2: Score: {{ score[1].playerscore }} </p> </div>
-            <div class="timer">Seconds played {{ time }}</div>
-            <div class="whoisplaying"><p>Player{{score[2].currentplayer + 1}} is playing</p></div>
-            <div class="declareWinner" v-if="score[3].winner"><p> Winner is:  {{ score[3].winner }} </p></div>
+            <div class="Playermoves menu"> <p>Moves {{ moves[0].moves }}</p> </div>
+            <div class="Playerscores menu"> <p>Player1:  score: {{ score[0].playerscore }} Player2: Score: {{ score[1].playerscore }} </p> </div>
+            <div class="timer menu">Seconds played {{ time }}</div>
+            <div class="menu" :class = "(score[2].currentplayer + 1 == 1)?'player1class':'whoisplaying'"><p>Player{{score[2].currentplayer + 1}} is playing</p></div>
+            <div class="declareWinner menu" v-if="score[3].winner"><p> Winner is:  {{ score[3].winner }} </p></div>
             `
         }
 
